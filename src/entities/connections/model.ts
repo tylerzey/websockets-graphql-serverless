@@ -1,3 +1,4 @@
+import { twoHoursInSeconds } from "../../common/dateFunctions";
 import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
 
 export async function createConnection(args: any) {
@@ -6,6 +7,7 @@ export async function createConnection(args: any) {
   const connection = {
     key: `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`,
     secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`,
+    expiresAfter: Date.now() + (twoHoursInSeconds || 0),
   };
   return null;
 }

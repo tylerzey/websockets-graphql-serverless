@@ -1,5 +1,5 @@
 Resources:
-  IdLabelTimeTable:
+  ActivityTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: ${self:custom.activityTable}
@@ -12,12 +12,10 @@ Resources:
         - AttributeName: key
           KeyType: HASH
         - AttributeName: secondaryKey
-          KeyType: HASH
-      LocalSecondaryIndexes: 
-        IndexName: secondaryKey
-        KeySchema:
-          - AttributeName: secondaryKey
-            KeyType: HASH
+          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
+      TimeToLiveSpecification:
+        AttributeName: expiresAfter
+        Enabled: true

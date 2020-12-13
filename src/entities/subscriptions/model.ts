@@ -1,3 +1,4 @@
+import { twoHoursInSeconds } from "../../common/dateFunctions";
 import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
 
 export async function getSubscriptions(search: any) {
@@ -13,6 +14,7 @@ export async function createSubscription(args: any) {
   const subscription = {
     key: `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`,
     secondaryKey: `${dynamoLabels.subscription}${dynamoSeparator}${activityName}`,
+    expiresAfter: Date.now() + (twoHoursInSeconds || 0),
   };
 
   return {};
