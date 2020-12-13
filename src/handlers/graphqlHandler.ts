@@ -14,6 +14,7 @@ import {
   AuthenticatedUserType,
   ContextType,
 } from "../types/graphQLTypes";
+import { handleConnectionRequest } from "../entities/connections/model";
 
 export function buildSchema(
   authenticatedUser: AuthenticatedUserType
@@ -44,7 +45,15 @@ export async function handler(
       return buildErrorResponse("Body required");
     }
 
-    const { query, variables } = JSON.parse(event.body);
+    const parsedBody = JSON.parse(event.body);
+
+    if (parsedBody.type === "connection_init") {
+      return await handleConnectionRequest(event);
+    }
+
+    const { query, variables } = parsedBody?.payload
+      ? parsedBody?.payload
+      : parsedBody;
 
     const user: AuthenticatedUserType = null;
     const context: ContextType = { user, event };

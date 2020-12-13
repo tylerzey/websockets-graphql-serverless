@@ -22,7 +22,7 @@ export async function createSubscription(args: {
 
   await storeItem(subscription);
 
-  return {};
+  return null;
 }
 
 export async function deleteSubscription(args: any) {
