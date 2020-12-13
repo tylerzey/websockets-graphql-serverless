@@ -13,6 +13,7 @@ export async function createActivity(args: RootMutationActivityPostArgs) {
     key: `${dynamoLabels.activity}${dynamoSeparator}${args.activityName}`,
     secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${args.connectionId}`,
     label: dynamoLabels.activity,
+    activityName: args.activityName,
   };
   await storeItem(activity);
 

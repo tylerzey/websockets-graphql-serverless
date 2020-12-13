@@ -1,4 +1,8 @@
-import { ConditionExpression, DocumentClient } from "aws-sdk/clients/dynamodb";
+import {
+  ConditionExpression,
+  DocumentClient,
+  ItemList,
+} from "aws-sdk/clients/dynamodb";
 import { getTableName } from "./getEnvironmentVariables";
 
 const client = new DocumentClient({ region: process.env.region });
@@ -17,7 +21,7 @@ export async function storeItem(item: DocumentClient.PutItemInputAttributeMap) {
 export async function queryItems(
   key: string,
   filterExpression?: ConditionExpression
-) {
+): Promise<ItemList> {
   const params: DocumentClient.QueryInput = {
     TableName: getTableName(),
     KeyConditionExpression: "key = :key",
@@ -27,7 +31,7 @@ export async function queryItems(
     ...(filterExpression && { FilterExpression: filterExpression }),
   };
 
-  console.log("storeItem: ", params);
+  console.log("queryItems: ", params);
 
   const response = await client.query(params).promise();
 

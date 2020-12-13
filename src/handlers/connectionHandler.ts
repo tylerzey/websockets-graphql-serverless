@@ -1,3 +1,4 @@
+import "source-map-support/register";
 import { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
 import { handleConnectionRequest } from "../entities/connections/model";
 

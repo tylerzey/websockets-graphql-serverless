@@ -1,5 +1,6 @@
+import "source-map-support/register";
 import { DynamoDBStreamEvent } from "aws-lambda";
-import dynamoConverters from "dynamo-converters";
+import { itemToData } from "dynamo-converters";
 import { dynamoLabels } from "../common/dynamoHelpers";
 import { getSubscriptions } from "../entities/subscriptions/model";
 
@@ -7,10 +8,14 @@ async function publishWebsocketMessagesForRecord(
   currentRecordAsJavascriptObject: any
 ): Promise<void> {
   if (currentRecordAsJavascriptObject.label !== dynamoLabels.activity) {
+    console.log("no label");
+
     return;
   }
 
   if (!currentRecordAsJavascriptObject.activityName) {
+    console.log("no activity name");
+
     return;
   }
 
@@ -27,7 +32,7 @@ async function publishWebsocketMessagesForRecord(
 export async function handler(event: DynamoDBStreamEvent): Promise<void> {
   const records = event.Records || [];
 
-  await Promise.all(
+  const x = await Promise.all(
     records.map(async (record) => {
       const currentRecord = record?.dynamodb?.NewImage;
       console.log(currentRecord);
@@ -36,9 +41,7 @@ export async function handler(event: DynamoDBStreamEvent): Promise<void> {
         return;
       }
 
-      const currentRecordAsJavascriptObject = dynamoConverters.itemToData(
-        currentRecord
-      );
+      const currentRecordAsJavascriptObject = itemToData(currentRecord);
       console.log(currentRecordAsJavascriptObject);
 
       try {
