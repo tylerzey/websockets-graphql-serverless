@@ -12,8 +12,8 @@ custom:
   serverless-layers:
     - common:
         dependenciesPath: ./package.json
-        layersDeploymentBucket: '${self:service.name}-${self:custom.stage}-node-modules'
-        packageManager: 'yarn'
+        layersDeploymentBucket: "${self:service.name}-${self:custom.stage}-node-modules"
+        packageManager: "yarn"
   prune:
     automatic: true
     number: 1
@@ -33,6 +33,21 @@ provider:
   environment:
     NODE_ENV: production
     activityTable: ${self:custom.activityTable}
+  iamManagedPolicies:
+    - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DescribeStream
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:ListStreams
+      Resource:
+        - "Fn::GetAtt": [ActivityTable, Arn]
 
 functions:
   connection:

@@ -59,7 +59,10 @@ export async function handler(
       variables
     );
 
-    return buildCorsSuccessResponse(JSON.stringify({ data, errors }));
+    return buildCorsSuccessResponse(
+      JSON.stringify({ data, errors }),
+      event.headers
+    );
   } catch (error) {
     console.error(error);
 
