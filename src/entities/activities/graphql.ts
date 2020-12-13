@@ -5,7 +5,9 @@ import {
   GraphQLList,
   GraphQLInputObjectType,
 } from "graphql";
-import { RootMutationActivityPostArgs } from "../../generated/schemaTypes";
+import {
+  RootMutationActivityPostArgs,
+} from "../../generated/schemaTypes";
 import {
   AuthenticatedUserType,
   ContextType,
@@ -52,7 +54,7 @@ export const activitySubscriptions = (authedUser: AuthenticatedUserType) => ({
       activityTypeToSubscribeTo: { type: new GraphQLNonNull(GraphQLString) },
     },
     resolve: async (root: RootType, args: any, context: ContextType) => {
-      await createSubscription(args);
+      await createSubscription(args, context);
 
       return null;
     },

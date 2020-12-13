@@ -7,6 +7,6 @@ const contractLocation = "src/generated";
 (() => {
   fs.writeFileSync(
     `${contractLocation}/schema.graphql`,
-    printSchema(buildSchema(null))
+    printSchema(buildSchema({ connectionId: "connectionId" }))
   );
 })();

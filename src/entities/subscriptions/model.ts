@@ -1,6 +1,10 @@
-import { twoHoursInSeconds } from "../../common/dateFunctions";
+import {
+  twoHoursFromNowInSeconds,
+} from "../../common/dateFunctions";
 import { storeItem } from "../../common/dynamo";
 import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
+import { RootSubscriptionSubscribeToActivityArgs } from "../../generated/schemaTypes";
+import { ContextType } from "../../types/graphQLTypes";
 
 export async function getSubscriptions(search: any) {
   console.log("getsubscriptions");
@@ -8,16 +12,16 @@ export async function getSubscriptions(search: any) {
   return [];
 }
 
-export async function createSubscription(args: {
-  activityName: string;
-  connectionId: string;
-}) {
+export async function createSubscription(
+  args: RootSubscriptionSubscribeToActivityArgs,
+  context: ContextType
+) {
   console.log("createSubscription", args);
 
   const subscription = {
-    key: `${dynamoLabels.connection}${dynamoSeparator}${args.connectionId}`,
-    secondaryKey: `${dynamoLabels.subscription}${dynamoSeparator}${args.activityName}`,
-    expiresAfter: Date.now() + (twoHoursInSeconds || 0),
+    key: `${dynamoLabels.connection}${dynamoSeparator}${context.user.connectionId}`,
+    secondaryKey: `${dynamoLabels.subscription}${dynamoSeparator}${args.activityTypeToSubscribeTo}`,
+    expiresAfter: twoHoursFromNowInSeconds,
   };
 
   await storeItem(subscription);

@@ -55,7 +55,9 @@ export async function handler(
       ? parsedBody?.payload
       : parsedBody;
 
-    const user: AuthenticatedUserType = null;
+    const user: AuthenticatedUserType = {
+      connectionId: event?.requestContext?.connectionId,
+    };
     const context: ContextType = { user, event };
     const root: RootType = { root: "root" };
     const schema = buildSchema(user);
