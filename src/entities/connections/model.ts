@@ -1,6 +1,6 @@
 import { APIGatewayEvent } from "aws-lambda";
 import { twoHoursFromNowInSeconds } from "../../common/dateFunctions";
-import { storeItem } from "../../common/dynamo";
+import { queryItems, storeItem } from "../../common/dynamo";
 import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
 import {
   buildCorsSuccessResponse,
@@ -34,9 +34,12 @@ export async function createConnection(
 
 export async function getConnectionById(connectionId: string) {
   console.log("getConnectionById");
+  const items = await queryItems(
+    `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`
+  );
+  console.log("items: ", items);
 
-  // todo
-  return null;
+  return items;
 }
 
 export async function deleteConnectionById(connectionId: string) {
