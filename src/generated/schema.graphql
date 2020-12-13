@@ -1,0 +1,30 @@
+schema {
+  query: RootQuery
+  mutation: RootMutation
+  subscription: RootSubscription
+}
+
+type RootQuery {
+  activities(id: String, search: String): [Activity]
+}
+
+type Activity {
+  metadata: ActivityMetadata
+}
+
+type ActivityMetadata {
+  byConnectionId: String
+}
+
+type RootMutation {
+  activityPost(metadata: ActivityPostMutation!): Activity
+}
+
+input ActivityPostMutation {
+  activityType: String
+  byConnectionId: String
+}
+
+type RootSubscription {
+  onActivityAdded(activityTypeToSubscribeTo: String!): Activity
+}

@@ -1,0 +1,48 @@
+service: graphql-api
+
+plugins:
+  - serverless-prune-plugin
+  - serverless-plugin-parcel
+  - serverless-offline
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  activityTable: ${self:custom.stage}-activityTable
+  prune:
+    automatic: true
+    number: 1
+  parcel:
+    target: node
+    cache: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+  logRetentionInDays: 14
+  memorySize: 512
+  apiGateway:
+    shouldStartNameWithService: true
+  environment:
+    NODE_ENV: production
+    activityTable: ${self:custom.activityTable}
+
+functions:
+  connection:
+    handler: src/handlers/connectionHandler.handler
+    events:
+      - websocket:
+          route: $connect
+  graphQL:
+    handler: src/handlers/graphqlHandler.handler
+    events:
+      - http:
+          path: /graphql
+          method: post
+          cors: true
+      - websocket:
+          route: $default
+
+resources:
+  - ${file(resources/dynamodb.yml)}

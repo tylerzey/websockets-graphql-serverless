@@ -1,0 +1,46 @@
+{
+  "name": "api-roasry-app",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "tylerzey",
+  "main": "index.js",
+  "scripts": {
+    "generate-schema": "ts-node ./src/common/writeGraphQLSchema && yarn generate-types",
+    "generate-types": "graphql-codegen --config codegen.yml"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn generate-schema && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "aws-lambda": "^1.0.6",
+    "graphql": "^15.4.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.17.8",
+    "@graphql-codegen/introspection": "1.17.8",
+    "@graphql-codegen/typescript": "^1.17.9",
+    "@graphql-codegen/typescript-resolvers": "1.17.8",
+    "@types/aws-lambda": "^8.10.66",
+    "eslint": "^7.15.0",
+    "eslint-tyler-zey": "^1.0.0",
+    "husky": "^4.3.5",
+    "lint-staged": "^10.5.3",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.2.1",
+    "serverless": "^2.15.0",
+    "serverless-offline": "^6.8.0",
+    "serverless-plugin-parcel": "^0.1.1",
+    "serverless-prune-plugin": "^1.4.3",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  }
+}
