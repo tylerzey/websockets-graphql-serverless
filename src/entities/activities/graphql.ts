@@ -53,6 +53,7 @@ export const activitySubscriptions = (authedUser: AuthenticatedUserType) => ({
     },
     resolve: async (root: RootType, args: any, context: ContextType) => {
       await createSubscription(args);
+
       return null;
     },
   },

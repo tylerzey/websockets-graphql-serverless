@@ -4,6 +4,7 @@ import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
 
 export async function getSubscriptions(search: any) {
   console.log("getsubscriptions");
+
   return [];
 }
 
@@ -20,10 +21,12 @@ export async function createSubscription(args: {
   };
 
   await storeItem(subscription);
+
   return {};
 }
 
 export async function deleteSubscription(args: any) {
   console.log("deleteSubscription");
+
   return {};
 }

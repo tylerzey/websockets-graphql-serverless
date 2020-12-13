@@ -31,7 +31,7 @@
     "@types/aws-lambda": "^8.10.66",
     "aws-sdk": "^2.809.0",
     "eslint": "^7.15.0",
-    "eslint-tyler-zey": "^1.0.0",
+    "eslint-config-tyler-zey": "^1.0.2",
     "husky": "^4.3.5",
     "lint-staged": "^10.5.3",
     "parcel-bundler": "^1.12.4",

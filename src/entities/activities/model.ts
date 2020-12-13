@@ -18,5 +18,6 @@ export async function createActivity(args: {
 
 export async function subscribeToActivityByType() {
   console.log("subscribeToActivityByType");
+
   return null;
 }

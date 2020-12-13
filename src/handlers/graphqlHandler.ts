@@ -40,6 +40,7 @@ export async function handler(
 ): Promise<APIGatewayProxyResult> {
   try {
     console.log(event);
+
     if (!event.body) {
       return buildErrorResponse("Body required");
     }

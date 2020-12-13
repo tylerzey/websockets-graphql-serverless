@@ -1,5 +1,5 @@
-import { APIGatewayProxyEventHeaders, APIGatewayProxyResult } from "aws-lambda";
 import crypto from "crypto";
+import { APIGatewayProxyEventHeaders, APIGatewayProxyResult } from "aws-lambda";
 
 const defaultHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -42,6 +42,7 @@ export const buildCorsSuccessResponse = (
     wsResponseSecKey = sha1.read().toString("base64");
     console.log({ wsResponseSecKey });
   }
+
   if (protocols) {
     selectedProtocol = protocols.split(",")?.[0]?.trim();
   }
@@ -54,6 +55,7 @@ export const buildCorsSuccessResponse = (
         Connection: "Upgrade",
       }
     : {};
+
   return buildResponse(body, 200, headers);
 };
 

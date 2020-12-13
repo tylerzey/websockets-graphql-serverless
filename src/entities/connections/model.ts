@@ -28,5 +28,6 @@ export async function createConnection(
 
 export async function getConnectionById(connectionId: string) {
   console.log("getConnectionById");
+
   return null;
 }
