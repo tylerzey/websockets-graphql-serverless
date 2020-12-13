@@ -13,16 +13,17 @@ type Activity {
 }
 
 type ActivityMetadata {
-  byConnectionId: String
+  activityName: String
+  connectionId: String
 }
 
 type RootMutation {
-  activityPost(metadata: ActivityPostMutation!): Activity
+  activityPost(metadata: ActivityPostMetadata!): Activity
 }
 
-input ActivityPostMutation {
-  activityType: String
-  byConnectionId: String
+type ActivityPostMetadata {
+  activityName: String!
+  connectionId: String!
 }
 
 type RootSubscription {

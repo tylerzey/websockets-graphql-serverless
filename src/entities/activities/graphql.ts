@@ -3,35 +3,30 @@ import {
   GraphQLObjectType,
   GraphQLNonNull,
   GraphQLList,
+  GraphQLInputObjectType,
 } from "graphql";
-import {
-  generateQueryType,
-  CustomGraphQLType,
-  generatePostType,
-} from "../../common/generateTypesFromObject";
+import { RootMutationActivityPostArgs } from "../../generated/schemaTypes";
 import {
   AuthenticatedUserType,
   ContextType,
   RootType,
 } from "../../types/graphQLTypes";
 import { createSubscription } from "../subscriptions/model";
-import { postActivity } from "./model";
-
-const metadata: CustomGraphQLType = {
-  activityName: { type: GraphQLString, options: { post: true, patch: false } },
-  byConnectionId: { type: GraphQLString },
-};
-
-const activityMetadataType = new GraphQLObjectType({
-  name: `ActivityMetadata`,
-  fields: generateQueryType(metadata),
-});
+import { createActivity } from "./model";
 
 const activityType = new GraphQLObjectType({
   name: `Activity`,
   fields: () => {
     return {
-      metadata: { type: activityMetadataType },
+      metadata: {
+        type: new GraphQLObjectType({
+          name: `ActivityMetadata`,
+          fields: {
+            activityName: { type: GraphQLString },
+            connectionId: { type: GraphQLString },
+          },
+        }),
+      },
     };
   },
 });
@@ -50,28 +45,16 @@ const activityQuery = (authedUser: AuthenticatedUserType) => ({
   },
 });
 
-const activityPostMutation = (authedUser: AuthenticatedUserType) => ({
-  type: activityType,
-  args: {
-    metadata: {
-      type: new GraphQLNonNull(
-        generatePostType("ActivityPostMutation", metadata, authedUser)
-      ),
+export const activitySubscriptions = (authedUser: AuthenticatedUserType) => ({
+  subscribeToActivity: {
+    type: activityType,
+    args: {
+      activityTypeToSubscribeTo: { type: new GraphQLNonNull(GraphQLString) },
     },
-  },
-  resolve: async (root: RootType, args: any, context: ContextType) => {
-    return postActivity(args);
-  },
-});
-
-const activitySubscription = (authedUser: AuthenticatedUserType) => ({
-  type: activityType,
-  args: {
-    activityTypeToSubscribeTo: { type: new GraphQLNonNull(GraphQLString) },
-  },
-  resolve: async (root: RootType, args: any, context: ContextType) => {
-    await createSubscription(args);
-    return null;
+    resolve: async (root: RootType, args: any, context: ContextType) => {
+      await createSubscription(args);
+      return null;
+    },
   },
 });
 
@@ -80,9 +63,21 @@ export const activityQueries = (authedUser: AuthenticatedUserType) => ({
 });
 
 export const activityMutations = (authedUser: AuthenticatedUserType) => ({
-  activityPost: activityPostMutation(authedUser),
-});
-
-export const activitySubscriptions = (authedUser: AuthenticatedUserType) => ({
-  onActivityAdded: activitySubscription(authedUser),
+  activityPost: {
+    type: activityType,
+    args: {
+      metadata: {
+        type: new GraphQLInputObjectType({
+          name: "ActivityPostMetadata",
+          fields: {
+            activityName: { type: new GraphQLNonNull(GraphQLString) },
+            connectionId: { type: new GraphQLNonNull(GraphQLString) },
+          },
+        }),
+      },
+    },
+    resolve: async (root: RootType, args: RootMutationActivityPostArgs, context: ContextType) => {
+      return createActivity(args.metadata);
+    },
+  },
 });

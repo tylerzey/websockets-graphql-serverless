@@ -29,7 +29,8 @@ export type Activity = {
 
 export type ActivityMetadata = {
   __typename?: 'ActivityMetadata';
-  byConnectionId?: Maybe<Scalars['String']>;
+  activityName?: Maybe<Scalars['String']>;
+  connectionId?: Maybe<Scalars['String']>;
 };
 
 export type RootMutation = {
@@ -39,12 +40,13 @@ export type RootMutation = {
 
 
 export type RootMutationActivityPostArgs = {
-  metadata: ActivityPostMutation;
+  metadata: ActivityPostMetadata;
 };
 
-export type ActivityPostMutation = {
-  activityType?: Maybe<Scalars['String']>;
-  byConnectionId?: Maybe<Scalars['String']>;
+export type ActivityPostMetadata = {
+  __typename?: 'ActivityPostMetadata';
+  activityName: Scalars['String'];
+  connectionId: Scalars['String'];
 };
 
 export type RootSubscription = {
