@@ -18,14 +18,14 @@ type ActivityMetadata {
 }
 
 type RootMutation {
-  activityPost(metadata: ActivityPostMetadata!): Activity
+  activityPost(metadata: ActivityPostMetadata): Activity
 }
 
-type ActivityPostMetadata {
+input ActivityPostMetadata {
   activityName: String!
   connectionId: String!
 }
 
 type RootSubscription {
-  onActivityAdded(activityTypeToSubscribeTo: String!): Activity
+  subscribeToActivity(activityTypeToSubscribeTo: String!): Activity
 }

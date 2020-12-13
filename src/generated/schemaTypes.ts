@@ -40,21 +40,20 @@ export type RootMutation = {
 
 
 export type RootMutationActivityPostArgs = {
-  metadata: ActivityPostMetadata;
+  metadata?: Maybe<ActivityPostMetadata>;
 };
 
 export type ActivityPostMetadata = {
-  __typename?: 'ActivityPostMetadata';
   activityName: Scalars['String'];
   connectionId: Scalars['String'];
 };
 
 export type RootSubscription = {
   __typename?: 'RootSubscription';
-  onActivityAdded?: Maybe<Activity>;
+  subscribeToActivity?: Maybe<Activity>;
 };
 
 
-export type RootSubscriptionOnActivityAddedArgs = {
+export type RootSubscriptionSubscribeToActivityArgs = {
   activityTypeToSubscribeTo: Scalars['String'];
 };

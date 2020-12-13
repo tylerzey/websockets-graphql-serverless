@@ -29,7 +29,6 @@ export function buildSchema(
     }),
     mutation: new GraphQLObjectType({
       name: "RootMutation",
-      // @ts-expect-error
       fields: getMutations(authenticatedUser),
     }),
   });

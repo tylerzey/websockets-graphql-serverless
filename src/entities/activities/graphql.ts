@@ -77,8 +77,12 @@ export const activityMutations = (authedUser: AuthenticatedUserType) => ({
         }),
       },
     },
-    resolve: async (root: RootType, args: RootMutationActivityPostArgs, context: ContextType) => {
-      return createActivity(args.metadata);
+    resolve: async (
+      root: RootType,
+      args: RootMutationActivityPostArgs,
+      context: ContextType
+    ) => {
+      return createActivity(args);
     },
   },
 });
