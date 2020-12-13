@@ -1,7 +1,5 @@
 import { APIGatewayEvent } from "aws-lambda";
-import {
-  twoHoursFromNowInSeconds,
-} from "../../common/dateFunctions";
+import { twoHoursFromNowInSeconds } from "../../common/dateFunctions";
 import { storeItem } from "../../common/dynamo";
 import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
 import {
@@ -22,6 +20,7 @@ export async function createConnection(
   const connection = {
     key: `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`,
     secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`,
+    label: dynamoLabels.connection,
     expiresAfter: twoHoursFromNowInSeconds,
     connectedAt,
     domain,
@@ -36,6 +35,14 @@ export async function createConnection(
 export async function getConnectionById(connectionId: string) {
   console.log("getConnectionById");
 
+  // todo
+  return null;
+}
+
+export async function deleteConnectionById(connectionId: string) {
+  console.log("deleteConnectionById");
+
+  // todo
   return null;
 }
 

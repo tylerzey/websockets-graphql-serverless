@@ -3,11 +3,9 @@ import {
   GraphQLObjectType,
   GraphQLNonNull,
   GraphQLList,
-  GraphQLInputObjectType,
+  GraphQLFloat,
 } from "graphql";
-import {
-  RootMutationActivityPostArgs,
-} from "../../generated/schemaTypes";
+import { RootMutationActivityPostArgs } from "../../generated/schemaTypes";
 import {
   AuthenticatedUserType,
   ContextType,
@@ -20,70 +18,50 @@ const activityType = new GraphQLObjectType({
   name: `Activity`,
   fields: () => {
     return {
-      metadata: {
-        type: new GraphQLObjectType({
-          name: `ActivityMetadata`,
-          fields: {
-            activityName: { type: GraphQLString },
-            connectionId: { type: GraphQLString },
-          },
-        }),
-      },
+      activityName: { type: GraphQLString },
+      connectionId: { type: GraphQLString },
     };
-  },
-});
-
-const activityQuery = (authedUser: AuthenticatedUserType) => ({
-  name: "ActivityQuery",
-  type: new GraphQLList(activityType),
-  args: {
-    id: { type: GraphQLString },
-    search: { type: GraphQLString },
-  },
-  resolve: async (root: RootType, args: any, context: ContextType) => {
-    console.log("activity graphql query resolving on ", args);
-
-    return null;
   },
 });
 
 export const activitySubscriptions = (authedUser: AuthenticatedUserType) => ({
   subscribeToActivity: {
-    type: activityType,
+    type: GraphQLString,
     args: {
       activityTypeToSubscribeTo: { type: new GraphQLNonNull(GraphQLString) },
     },
     resolve: async (root: RootType, args: any, context: ContextType) => {
       await createSubscription(args, context);
 
-      return null;
+      return "Success";
     },
   },
 });
 
 export const activityQueries = (authedUser: AuthenticatedUserType) => ({
-  activities: activityQuery(authedUser),
+  queryActivitiesByActivityName: {
+    name: "ActivityQuery",
+    type: new GraphQLList(activityType),
+    args: {
+      activityName: { type: GraphQLString },
+      since: { type: GraphQLFloat },
+    },
+    resolve: async (root: RootType, args: any) => {
+      console.log("activity graphql query resolving on ", args);
+
+      return null;
+    },
+  },
 });
 
 export const activityMutations = (authedUser: AuthenticatedUserType) => ({
   activityPost: {
     type: activityType,
     args: {
-      metadata: {
-        type: new GraphQLInputObjectType({
-          name: "ActivityPostMetadata",
-          fields: {
-            activityName: { type: new GraphQLNonNull(GraphQLString) },
-            connectionId: { type: new GraphQLNonNull(GraphQLString) },
-          },
-        }),
-      },
+      activityName: { type: new GraphQLNonNull(GraphQLString) },
+      connectionId: { type: new GraphQLNonNull(GraphQLString) },
     },
-    resolve: async (
-      root: RootType,
-      args: RootMutationActivityPostArgs,
-      context: ContextType
-    ) => {
+    resolve: async (root: RootType, args: RootMutationActivityPostArgs) => {
       return createActivity(args);
     },
   },

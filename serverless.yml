@@ -64,6 +64,15 @@ functions:
           cors: true
       - websocket:
           route: $default
+  activityStreamHandler:
+    handler: src/handlers/activityStreamHandler.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [ActivityTable, StreamArn]
+          batchSize: 10
+          startingPosition: LATEST
 
 resources:
   - ${file(resources/dynamodb.yml)}

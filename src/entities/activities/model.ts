@@ -12,14 +12,13 @@ export async function createActivity(args: RootMutationActivityPostArgs) {
   const activity = {
     key: `${dynamoLabels.connection}${dynamoSeparator}${args.metadata.connectionId}`,
     secondaryKey: `${dynamoLabels.activity}${dynamoSeparator}${args.metadata.activityName}`,
+    label: dynamoLabels.activity,
   };
   await storeItem(activity);
 
   return null;
 }
 
-export async function subscribeToActivityByType() {
-  console.log("subscribeToActivityByType");
-
-  return null;
+export async function getActivities(args: { activitySearchType: string }) {
+  //
 }
