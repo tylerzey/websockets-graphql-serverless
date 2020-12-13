@@ -7,7 +7,7 @@ Get all activities by type
 Get all activities by connectionId
 
 CONNECTION#connectionId CONNECTION#connectionId
-CONNECTION#connectionId ACTIVITY#activityName  
+CONNECTION#connectionId ACTIVITY#activityName#Date.now()
 CONNECTION#connectionId SUBSCRIPTION#activityName
 
 # Entities:

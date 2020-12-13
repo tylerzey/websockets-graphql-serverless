@@ -1,4 +1,5 @@
 import { twoHoursInSeconds } from "../../common/dateFunctions";
+import { storeItem } from "../../common/dynamo";
 import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
 
 export async function getSubscriptions(search: any) {
@@ -6,17 +7,19 @@ export async function getSubscriptions(search: any) {
   return [];
 }
 
-export async function createSubscription(args: any) {
+export async function createSubscription(args: {
+  activityName: string;
+  connectionId: string;
+}) {
   console.log("createSubscription", args);
-  const activityName = "todo";
-  const connectionId = "todo";
 
   const subscription = {
-    key: `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`,
-    secondaryKey: `${dynamoLabels.subscription}${dynamoSeparator}${activityName}`,
+    key: `${dynamoLabels.connection}${dynamoSeparator}${args.connectionId}`,
+    secondaryKey: `${dynamoLabels.subscription}${dynamoSeparator}${args.activityName}`,
     expiresAfter: Date.now() + (twoHoursInSeconds || 0),
   };
 
+  await storeItem(subscription);
   return {};
 }
 

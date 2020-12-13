@@ -29,6 +29,7 @@
     "@graphql-codegen/typescript": "^1.17.9",
     "@graphql-codegen/typescript-resolvers": "1.17.8",
     "@types/aws-lambda": "^8.10.66",
+    "aws-sdk": "^2.809.0",
     "eslint": "^7.15.0",
     "eslint-tyler-zey": "^1.0.0",
     "husky": "^4.3.5",
