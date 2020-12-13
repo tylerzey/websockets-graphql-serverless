@@ -13,22 +13,17 @@ export type Scalars = {
 
 export type RootQuery = {
   __typename?: 'RootQuery';
-  activities?: Maybe<Array<Maybe<Activity>>>;
+  queryActivitiesByActivityName?: Maybe<Array<Maybe<Activity>>>;
 };
 
 
-export type RootQueryActivitiesArgs = {
-  id?: Maybe<Scalars['String']>;
-  search?: Maybe<Scalars['String']>;
+export type RootQueryQueryActivitiesByActivityNameArgs = {
+  activityName?: Maybe<Scalars['String']>;
+  since?: Maybe<Scalars['Float']>;
 };
 
 export type Activity = {
   __typename?: 'Activity';
-  metadata?: Maybe<ActivityMetadata>;
-};
-
-export type ActivityMetadata = {
-  __typename?: 'ActivityMetadata';
   activityName?: Maybe<Scalars['String']>;
   connectionId?: Maybe<Scalars['String']>;
 };
@@ -40,17 +35,13 @@ export type RootMutation = {
 
 
 export type RootMutationActivityPostArgs = {
-  metadata?: Maybe<ActivityPostMetadata>;
-};
-
-export type ActivityPostMetadata = {
   activityName: Scalars['String'];
   connectionId: Scalars['String'];
 };
 
 export type RootSubscription = {
   __typename?: 'RootSubscription';
-  subscribeToActivity?: Maybe<Activity>;
+  subscribeToActivity?: Maybe<Scalars['String']>;
 };
 
 

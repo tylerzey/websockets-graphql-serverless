@@ -2,13 +2,12 @@
 
 Get connection by connectionId
 Get all subscriptions by activityName
-Get all subscriptions by connectionId
 Get all activities by type
-Get all activities by connectionId
+Get all subscriptions by connectionId
 
 CONNECTION#connectionId CONNECTION#connectionId
-CONNECTION#connectionId ACTIVITY#activityName#Date.now()
-CONNECTION#connectionId SUBSCRIPTION#activityName
+ACTIVITY#activityName CONNECTION#connectionId
+SUBSCRIPTION#activityName CONNECTION#connectionId
 
 # Entities:
 

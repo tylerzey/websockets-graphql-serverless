@@ -1,7 +1,7 @@
 import { DynamoDBStreamEvent } from "aws-lambda";
 import dynamoConverters from "dynamo-converters";
 import { dynamoLabels } from "../common/dynamoHelpers";
-import { getActivities } from "../entities/activities/model";
+import { getSubscriptions } from "../entities/subscriptions/model";
 
 async function publishWebsocketMessagesForRecord(
   currentRecordAsJavascriptObject: any
@@ -14,9 +14,14 @@ async function publishWebsocketMessagesForRecord(
     return;
   }
 
-  const subscriptionsToCurrentActivity = await getActivities({
+  const subscriptionsToCurrentActivity = await getSubscriptions({
     activitySearchType: currentRecordAsJavascriptObject.activityName,
   });
+
+  console.log(
+    "subscriptionsToCurrentActivity: ",
+    subscriptionsToCurrentActivity
+  );
 }
 
 export async function handler(event: DynamoDBStreamEvent): Promise<void> {

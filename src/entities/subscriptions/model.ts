@@ -1,14 +1,16 @@
 import { twoHoursFromNowInSeconds } from "../../common/dateFunctions";
-import { storeItem } from "../../common/dynamo";
+import { queryItems, storeItem } from "../../common/dynamo";
 import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
 import { RootSubscriptionSubscribeToActivityArgs } from "../../generated/schemaTypes";
 import { ContextType } from "../../types/graphQLTypes";
 
-export async function getSubscriptions(search: any) {
-  console.log("getsubscriptions");
+export async function getSubscriptions(args: { activitySearchType: string }) {
+  const items = await queryItems(
+    `${dynamoLabels.subscription}${dynamoSeparator}${args.activitySearchType}`
+  );
+  console.log("items: ", items);
 
-  // todo
-  return [];
+  return items;
 }
 
 export async function createSubscription(
@@ -18,8 +20,8 @@ export async function createSubscription(
   console.log("createSubscription", args);
 
   const subscription = {
-    key: `${dynamoLabels.connection}${dynamoSeparator}${context.user.connectionId}`,
-    secondaryKey: `${dynamoLabels.subscription}${dynamoSeparator}${args.activityTypeToSubscribeTo}`,
+    key: `${dynamoLabels.subscription}${dynamoSeparator}${args.activityTypeToSubscribeTo}`,
+    secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${context.user.connectionId}`,
     expiresAfter: twoHoursFromNowInSeconds,
     label: dynamoLabels.subscription,
   };

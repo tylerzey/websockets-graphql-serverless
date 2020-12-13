@@ -1,17 +1,17 @@
-import { storeItem } from "../../common/dynamo";
+import { queryItems, storeItem } from "../../common/dynamo";
 import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
 import { RootMutationActivityPostArgs } from "../../generated/schemaTypes";
 
 export async function createActivity(args: RootMutationActivityPostArgs) {
   console.log("createActivity", args);
 
-  if (!args.metadata?.connectionId || !args.metadata.activityName) {
+  if (!args?.connectionId || !args.activityName) {
     throw new Error("Missing args");
   }
 
   const activity = {
-    key: `${dynamoLabels.connection}${dynamoSeparator}${args.metadata.connectionId}`,
-    secondaryKey: `${dynamoLabels.activity}${dynamoSeparator}${args.metadata.activityName}`,
+    key: `${dynamoLabels.activity}${dynamoSeparator}${args.activityName}`,
+    secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${args.connectionId}`,
     label: dynamoLabels.activity,
   };
   await storeItem(activity);
@@ -20,5 +20,10 @@ export async function createActivity(args: RootMutationActivityPostArgs) {
 }
 
 export async function getActivities(args: { activitySearchType: string }) {
-  //
+  const items = await queryItems(
+    `${dynamoLabels.activity}${dynamoSeparator}${args.activitySearchType}`
+  );
+  console.log("items: ", items);
+
+  return items;
 }

@@ -5,27 +5,18 @@ schema {
 }
 
 type RootQuery {
-  activities(id: String, search: String): [Activity]
+  queryActivitiesByActivityName(activityName: String, since: Float): [Activity]
 }
 
 type Activity {
-  metadata: ActivityMetadata
-}
-
-type ActivityMetadata {
   activityName: String
   connectionId: String
 }
 
 type RootMutation {
-  activityPost(metadata: ActivityPostMetadata): Activity
-}
-
-input ActivityPostMetadata {
-  activityName: String!
-  connectionId: String!
+  activityPost(activityName: String!, connectionId: String!): Activity
 }
 
 type RootSubscription {
-  subscribeToActivity(activityTypeToSubscribeTo: String!): Activity
+  subscribeToActivity(activityTypeToSubscribeTo: String!): String
 }

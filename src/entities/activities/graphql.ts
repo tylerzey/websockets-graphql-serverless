@@ -3,9 +3,8 @@ import {
   GraphQLObjectType,
   GraphQLNonNull,
   GraphQLList,
-  GraphQLFloat,
 } from "graphql";
-import { RootMutationActivityPostArgs } from "../../generated/schemaTypes";
+import { queryItems } from "../../common/dynamo";
 import {
   AuthenticatedUserType,
   ContextType,
@@ -44,12 +43,11 @@ export const activityQueries = (authedUser: AuthenticatedUserType) => ({
     type: new GraphQLList(activityType),
     args: {
       activityName: { type: GraphQLString },
-      since: { type: GraphQLFloat },
     },
     resolve: async (root: RootType, args: any) => {
       console.log("activity graphql query resolving on ", args);
 
-      return null;
+      return queryItems(args);
     },
   },
 });
@@ -61,7 +59,7 @@ export const activityMutations = (authedUser: AuthenticatedUserType) => ({
       activityName: { type: new GraphQLNonNull(GraphQLString) },
       connectionId: { type: new GraphQLNonNull(GraphQLString) },
     },
-    resolve: async (root: RootType, args: RootMutationActivityPostArgs) => {
+    resolve: async (root: RootType, args: any) => {
       return createActivity(args);
     },
   },
