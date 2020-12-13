@@ -24,10 +24,10 @@ const buildResponse = (
 
 export const buildCorsSuccessResponse = (
   body = "",
-  incomingHeaders: APIGatewayProxyEventHeaders
+  incomingHeaders?: APIGatewayProxyEventHeaders
 ): APIGatewayProxyResult => {
   const wsKey = incomingHeaders?.["Sec-WebSocket-Key"];
-  const protocols = incomingHeaders["Sec-WebSocket-Protocol"];
+  const protocols = incomingHeaders?.["Sec-WebSocket-Protocol"];
 
   let selectedProtocol: undefined | string;
   let wsResponseSecKey: undefined | string;
