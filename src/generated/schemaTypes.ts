@@ -19,7 +19,6 @@ export type RootQuery = {
 
 export type RootQueryQueryActivitiesByActivityNameArgs = {
   activityName?: Maybe<Scalars['String']>;
-  since?: Maybe<Scalars['Float']>;
 };
 
 export type Activity = {

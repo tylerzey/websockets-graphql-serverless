@@ -5,7 +5,7 @@ schema {
 }
 
 type RootQuery {
-  queryActivitiesByActivityName(activityName: String, since: Float): [Activity]
+  queryActivitiesByActivityName(activityName: String): [Activity]
 }
 
 type Activity {
