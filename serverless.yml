@@ -1,6 +1,7 @@
 service: graphql-api
 
 plugins:
+  - serverless-layers
   - serverless-prune-plugin
   - serverless-plugin-parcel
   - serverless-offline
@@ -8,12 +9,17 @@ plugins:
 custom:
   stage: ${opt:stage, self:provider.stage}
   activityTable: ${self:custom.stage}-activityTable
+  serverless-layers:
+    - common:
+        dependenciesPath: ./package.json
+        layersDeploymentBucket: '${self:service.name}-${self:custom.stage}-node-modules'
+        packageManager: 'yarn'
   prune:
     automatic: true
     number: 1
   parcel:
     target: node
-    cache: true
+    cache: false
 
 provider:
   name: aws

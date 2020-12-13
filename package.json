@@ -37,6 +37,7 @@
     "parcel-bundler": "^1.12.4",
     "prettier": "^2.2.1",
     "serverless": "^2.15.0",
+    "serverless-layers": "^2.3.3",
     "serverless-offline": "^6.8.0",
     "serverless-plugin-parcel": "^0.1.1",
     "serverless-prune-plugin": "^1.4.3",
