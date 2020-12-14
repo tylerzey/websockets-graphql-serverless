@@ -18,7 +18,7 @@ export type RootQuery = {
 
 
 export type RootQueryQueryActivitiesByActivityNameArgs = {
-  activityName?: Maybe<Scalars['String']>;
+  activityName: Scalars['String'];
 };
 
 export type Activity = {
@@ -40,10 +40,10 @@ export type RootMutationActivityPostArgs = {
 
 export type RootSubscription = {
   __typename?: 'RootSubscription';
-  subscribeToActivity?: Maybe<Scalars['String']>;
+  subscribeToActivity?: Maybe<Array<Maybe<Activity>>>;
 };
 
 
 export type RootSubscriptionSubscribeToActivityArgs = {
-  activityTypeToSubscribeTo: Scalars['String'];
+  activityName: Scalars['String'];
 };

@@ -7,3 +7,13 @@ export function getTableName(): string {
 
   return tableName;
 }
+
+export function getWebsocketEndpoint(): string {
+  const websocketEndpoint = process.env.websocketEndpoint;
+
+  if (!websocketEndpoint) {
+    throw new Error("websocketEndpoint is not defined");
+  }
+
+  return websocketEndpoint;
+}

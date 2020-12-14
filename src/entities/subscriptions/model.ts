@@ -1,12 +1,18 @@
 import { twoHoursFromNowInSeconds } from "../../common/dateFunctions";
 import { queryItems, storeItem } from "../../common/dynamo";
-import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
+import { dynamoSeparator } from "../../common/dynamoHelpers";
 import { RootSubscriptionSubscribeToActivityArgs } from "../../generated/schemaTypes";
-import { ContextType } from "../../types/graphQLTypes";
+import {
+  ContextType,
+  DynamoLabels,
+  SubscriptionType,
+} from "../../types/graphQLTypes";
 
-export async function getSubscriptions(args: { activitySearchType: string }) {
-  const items = await queryItems(
-    `${dynamoLabels.subscription}${dynamoSeparator}${args.activitySearchType}`
+export async function getSubscriptions(args: {
+  activitySearchType: string;
+}): Promise<SubscriptionType[]> {
+  const items = await queryItems<SubscriptionType>(
+    `${DynamoLabels.SUBSCRIPTION}${dynamoSeparator}${args.activitySearchType}`
   );
   console.log("items: ", items);
 
@@ -16,21 +22,27 @@ export async function getSubscriptions(args: { activitySearchType: string }) {
 export async function createSubscription(
   args: RootSubscriptionSubscribeToActivityArgs,
   context: ContextType
-) {
+): Promise<void> {
   console.log("createSubscription", args);
+  const activityName = args.activityName;
+  const connectionId = context.user.connectionId;
 
-  const subscription = {
-    key: `${dynamoLabels.subscription}${dynamoSeparator}${args.activityTypeToSubscribeTo}`,
-    secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${context.user.connectionId}`,
+  if (!connectionId) {
+    throw new Error("connectionId is empty");
+  }
+
+  const subscription: SubscriptionType = {
+    key: `${DynamoLabels.SUBSCRIPTION}${dynamoSeparator}${activityName}`,
+    secondaryKey: `${DynamoLabels.CONNECTION}${dynamoSeparator}${connectionId}`,
     expiresAfter: twoHoursFromNowInSeconds,
-    label: dynamoLabels.subscription,
-    activityName: args.activityTypeToSubscribeTo,
-    connectionId: context.user.connectionId,
+    label: DynamoLabels.SUBSCRIPTION,
+    activityName,
+    connectionId,
   };
 
   await storeItem(subscription);
 
-  return null;
+  return;
 }
 
 export async function deleteSubscription(args: any) {

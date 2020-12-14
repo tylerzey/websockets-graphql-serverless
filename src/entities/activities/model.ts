@@ -1,6 +1,8 @@
 import { queryItems, storeItem } from "../../common/dynamo";
-import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
+import { dynamoSeparator } from "../../common/dynamoHelpers";
 import { RootMutationActivityPostArgs } from "../../generated/schemaTypes";
+import { DynamoLabels, ActivityType } from "../../types/graphQLTypes";
+import { postToConnection } from "./apiGateway";
 
 export async function createActivity(args: RootMutationActivityPostArgs) {
   console.log("createActivity", args);
@@ -9,10 +11,10 @@ export async function createActivity(args: RootMutationActivityPostArgs) {
     throw new Error("Missing args");
   }
 
-  const activity = {
-    key: `${dynamoLabels.activity}${dynamoSeparator}${args.activityName}`,
-    secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${args.connectionId}`,
-    label: dynamoLabels.activity,
+  const activity: ActivityType = {
+    key: `${DynamoLabels.ACTIVITY}${dynamoSeparator}${args.activityName}`,
+    secondaryKey: `${DynamoLabels.CONNECTION}${dynamoSeparator}${args.connectionId}`,
+    label: DynamoLabels.ACTIVITY,
     activityName: args.activityName,
   };
   await storeItem(activity);
@@ -20,11 +22,26 @@ export async function createActivity(args: RootMutationActivityPostArgs) {
   return null;
 }
 
-export async function getActivities(args: { activitySearchType: string }) {
-  const items = await queryItems(
-    `${dynamoLabels.activity}${dynamoSeparator}${args.activitySearchType}`
+export async function getActivities(args: {
+  activitySearchType: string;
+}): Promise<ActivityType[]> {
+  const items = await queryItems<ActivityType>(
+    `${DynamoLabels.ACTIVITY}${dynamoSeparator}${args.activitySearchType}`
   );
   console.log("items: ", items);
 
   return items;
+}
+
+export async function notifyOfNewActivity(
+  activity: ActivityType,
+  connectionId: string
+): Promise<void> {
+  const data = JSON.stringify({
+    id: activity.key,
+    type: "data",
+    payload: { data: { subscribeToActivity: { ...activity } } },
+  });
+
+  await postToConnection({ connectionId, data });
 }

@@ -5,7 +5,7 @@ schema {
 }
 
 type RootQuery {
-  queryActivitiesByActivityName(activityName: String): [Activity]
+  queryActivitiesByActivityName(activityName: String!): [Activity]
 }
 
 type Activity {
@@ -18,5 +18,5 @@ type RootMutation {
 }
 
 type RootSubscription {
-  subscribeToActivity(activityTypeToSubscribeTo: String!): String
+  subscribeToActivity(activityName: String!): [Activity]
 }

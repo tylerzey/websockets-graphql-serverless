@@ -1,11 +1,12 @@
 import { APIGatewayEvent } from "aws-lambda";
 import { twoHoursFromNowInSeconds } from "../../common/dateFunctions";
 import { queryItems, storeItem } from "../../common/dynamo";
-import { dynamoLabels, dynamoSeparator } from "../../common/dynamoHelpers";
+import { dynamoSeparator } from "../../common/dynamoHelpers";
 import {
   buildCorsSuccessResponse,
   buildErrorResponse,
 } from "../../common/responseWrappers";
+import { DynamoLabels, ConnectionType } from "../../types/graphQLTypes";
 
 export async function createConnection(
   connectionId: string,
@@ -17,12 +18,12 @@ export async function createConnection(
 ) {
   console.log("createConnection");
 
-  const connection = {
-    key: `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`,
-    secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`,
-    label: dynamoLabels.connection,
+  const connection: ConnectionType = {
+    key: `${DynamoLabels.CONNECTION}${dynamoSeparator}${connectionId}`,
+    secondaryKey: `${DynamoLabels.CONNECTION}${dynamoSeparator}${connectionId}`,
+    label: DynamoLabels.CONNECTION,
     expiresAfter: twoHoursFromNowInSeconds,
-    connectedAt,
+    connectedAt: connectedAt || Date.now(),
     domain,
     stage,
   };
@@ -32,14 +33,16 @@ export async function createConnection(
   return null;
 }
 
-export async function getConnectionById(connectionId: string) {
+export async function getConnectionById(
+  connectionId: string
+): Promise<ConnectionType | undefined> {
   console.log("getConnectionById");
-  const items = await queryItems(
-    `${dynamoLabels.connection}${dynamoSeparator}${connectionId}`
+  const items = await queryItems<ConnectionType>(
+    `${DynamoLabels.CONNECTION}${dynamoSeparator}${connectionId}`
   );
   console.log("items: ", items);
 
-  return items;
+  return items?.[0];
 }
 
 export async function deleteConnectionById(connectionId: string) {

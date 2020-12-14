@@ -33,6 +33,7 @@ provider:
   environment:
     NODE_ENV: production
     activityTable: ${self:custom.activityTable}
+    websocketEndpoint: https://ga6eq542y6.execute-api.us-east-1.amazonaws.com/prod
   iamManagedPolicies:
     - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   iamRoleStatements:

@@ -1,15 +1,14 @@
 import "source-map-support/register";
 import { DynamoDBStreamEvent } from "aws-lambda";
-import { ApiGatewayManagementApi } from "aws-sdk";
 import { itemToData } from "dynamo-converters";
-import { dynamoLabels } from "../common/dynamoHelpers";
 import { getSubscriptions } from "../entities/subscriptions/model";
-import { getConnectionById } from "../entities/connections/model";
+import { DynamoLabels, EntityType } from "../types/graphQLTypes";
+import { notifyOfNewActivity } from "../entities/activities/model";
 
 async function publishWebsocketMessagesForRecord(
-  currentRecordAsJavascriptObject: any
+  currentRecordAsJavascriptObject: EntityType
 ): Promise<void> {
-  if (currentRecordAsJavascriptObject.label !== dynamoLabels.activity) {
+  if (currentRecordAsJavascriptObject.label !== DynamoLabels.ACTIVITY) {
     console.log("no label");
 
     return;
@@ -38,32 +37,7 @@ async function publishWebsocketMessagesForRecord(
         return;
       }
 
-      const connection = await getConnectionById(connectionId);
-      console.log(connection);
-      const data = JSON.stringify({
-        id: currentRecordAsJavascriptObject.key,
-        type: "data",
-        payload: {
-          data: {
-            subscribeToActivity: { activityName: "x", connectionId: "x" },
-          },
-        },
-      });
-      console.log(data);
-
-      try {
-        await new ApiGatewayManagementApi({
-          endpoint:
-            "https://ga6eq542y6.execute-api.us-east-1.amazonaws.com/prod",
-        })
-          .postToConnection({
-            ConnectionId: connectionId,
-            Data: data,
-          })
-          .promise();
-      } catch (error) {
-        console.error(error);
-      }
+      await notifyOfNewActivity(currentRecordAsJavascriptObject, connectionId);
     })
   );
 }
@@ -80,7 +54,10 @@ export async function handler(event: DynamoDBStreamEvent): Promise<void> {
         return;
       }
 
-      const currentRecordAsJavascriptObject = itemToData(currentRecord);
+      // @ts-expect-error
+      const currentRecordAsJavascriptObject = itemToData(
+        currentRecord
+      ) as EntityType;
       console.log(currentRecordAsJavascriptObject);
 
       try {
