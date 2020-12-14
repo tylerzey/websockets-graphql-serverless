@@ -1,45 +1,30 @@
 import "source-map-support/register";
 import { DynamoDBStreamEvent } from "aws-lambda";
 import { itemToData } from "dynamo-converters";
-import { getSubscriptions } from "../entities/subscriptions/model";
 import { DynamoLabels, EntityType } from "../types/graphQLTypes";
 import { notifyOfNewActivity } from "../entities/activities/model";
+
+const notifications = {
+  [DynamoLabels.ACTIVITY]: [notifyOfNewActivity],
+  [DynamoLabels.SUBSCRIPTION]: [],
+  [DynamoLabels.CONNECTION]: [],
+};
 
 async function publishWebsocketMessagesForRecord(
   currentRecordAsJavascriptObject: EntityType
 ): Promise<void> {
-  if (currentRecordAsJavascriptObject.label !== DynamoLabels.ACTIVITY) {
+  if (!currentRecordAsJavascriptObject.label) {
     console.log("no label");
 
     return;
   }
+  const possibleSubscriptions =
+    notifications[currentRecordAsJavascriptObject.label];
 
-  if (!currentRecordAsJavascriptObject.activityName) {
-    console.log("no activity name");
-
-    return;
+  for (const subscription of possibleSubscriptions) {
+    // @ts-expect-error
+    await subscription(currentRecordAsJavascriptObject);
   }
-
-  const subscriptionsToCurrentActivity = await getSubscriptions({
-    activitySearchType: currentRecordAsJavascriptObject.activityName,
-  });
-
-  console.log(
-    "subscriptionsToCurrentActivity: ",
-    subscriptionsToCurrentActivity
-  );
-
-  await Promise.all(
-    subscriptionsToCurrentActivity.map(async (subscription) => {
-      const connectionId = subscription?.connectionId as string;
-
-      if (!connectionId) {
-        return;
-      }
-
-      await notifyOfNewActivity(currentRecordAsJavascriptObject, connectionId);
-    })
-  );
 }
 
 export async function handler(event: DynamoDBStreamEvent): Promise<void> {

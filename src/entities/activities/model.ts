@@ -3,6 +3,7 @@ import { dynamoSeparator } from "../../common/dynamoHelpers";
 import { RootMutationActivityPostArgs } from "../../generated/schemaTypes";
 import { DynamoLabels, ActivityType } from "../../types/graphQLTypes";
 import { postToConnection } from "../../common/apiGateway";
+import { getSubscriptions } from "../subscriptions/model";
 
 export async function createActivity(
   args: RootMutationActivityPostArgs
@@ -23,16 +24,35 @@ export async function createActivity(
 }
 
 export async function notifyOfNewActivity(
-  activity: ActivityType,
-  connectionId: string
+  activity: ActivityType
 ): Promise<void> {
-  const data = JSON.stringify({
-    id: "2",
-    type: "data",
-    payload: {
-      subscribeToActivity: activity,
-    },
+  if (!activity.activityName) {
+    console.log("no activity name");
+
+    return;
+  }
+
+  const subscriptionsToCurrentActivity = await getSubscriptions({
+    activitySearchType: activity.activityName,
   });
 
-  await postToConnection({ connectionId, data });
+  await Promise.all(
+    subscriptionsToCurrentActivity.map(async (subscription) => {
+      const connectionId = subscription?.connectionId as string;
+
+      if (!connectionId) {
+        return;
+      }
+
+      const data = JSON.stringify({
+        id: "2",
+        type: "data",
+        payload: {
+          subscribeToActivity: activity,
+        },
+      });
+
+      await postToConnection({ connectionId, data });
+    })
+  );
 }
