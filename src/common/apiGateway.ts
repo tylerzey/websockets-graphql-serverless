@@ -1,5 +1,5 @@
 import { ApiGatewayManagementApi } from "aws-sdk";
-import { getWebsocketEndpoint } from "../../common/getEnvironmentVariables";
+import { getWebsocketEndpoint } from "./getEnvironmentVariables";
 
 export async function postToConnection(args: {
   connectionId: string;

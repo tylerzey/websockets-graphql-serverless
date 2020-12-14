@@ -41,12 +41,4 @@ export async function createSubscription(
   };
 
   await storeItem(subscription);
-
-  return;
-}
-
-export async function deleteSubscription(args: any) {
-  console.log("deleteSubscription");
-
-  return {};
 }

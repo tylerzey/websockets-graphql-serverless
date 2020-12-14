@@ -1,10 +1,12 @@
-import { queryItems, storeItem } from "../../common/dynamo";
+import { storeItem } from "../../common/dynamo";
 import { dynamoSeparator } from "../../common/dynamoHelpers";
 import { RootMutationActivityPostArgs } from "../../generated/schemaTypes";
 import { DynamoLabels, ActivityType } from "../../types/graphQLTypes";
-import { postToConnection } from "./apiGateway";
+import { postToConnection } from "../../common/apiGateway";
 
-export async function createActivity(args: RootMutationActivityPostArgs) {
+export async function createActivity(
+  args: RootMutationActivityPostArgs
+): Promise<void> {
   console.log("createActivity", args);
 
   if (!args?.connectionId || !args.activityName) {
@@ -18,19 +20,6 @@ export async function createActivity(args: RootMutationActivityPostArgs) {
     activityName: args.activityName,
   };
   await storeItem(activity);
-
-  return null;
-}
-
-export async function getActivities(args: {
-  activitySearchType: string;
-}): Promise<ActivityType[]> {
-  const items = await queryItems<ActivityType>(
-    `${DynamoLabels.ACTIVITY}${dynamoSeparator}${args.activitySearchType}`
-  );
-  console.log("items: ", items);
-
-  return items;
 }
 
 export async function notifyOfNewActivity(

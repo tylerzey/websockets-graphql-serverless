@@ -1,4 +1,4 @@
-import { APIGatewayEvent } from "aws-lambda";
+import { APIGatewayEvent, APIGatewayProxyResult } from "aws-lambda";
 import { twoHoursFromNowInSeconds } from "../../common/dateFunctions";
 import { queryItems, storeItem } from "../../common/dynamo";
 import { dynamoSeparator } from "../../common/dynamoHelpers";
@@ -15,7 +15,7 @@ export async function createConnection(
     domain,
     stage,
   }: { connectedAt?: number; domain?: string; stage?: string }
-) {
+): Promise<void> {
   console.log("createConnection");
 
   const connection: ConnectionType = {
@@ -29,8 +29,6 @@ export async function createConnection(
   };
 
   await storeItem(connection);
-
-  return null;
 }
 
 export async function getConnectionById(
@@ -45,14 +43,9 @@ export async function getConnectionById(
   return items?.[0];
 }
 
-export async function deleteConnectionById(connectionId: string) {
-  console.log("deleteConnectionById");
-
-  // todo
-  return null;
-}
-
-export async function handleConnectionRequest(event: APIGatewayEvent) {
+export async function handleConnectionRequest(
+  event: APIGatewayEvent
+): Promise<APIGatewayProxyResult> {
   if (!event.requestContext?.connectionId) {
     return buildErrorResponse("Error");
   }
