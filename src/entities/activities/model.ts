@@ -27,9 +27,11 @@ export async function notifyOfNewActivity(
   connectionId: string
 ): Promise<void> {
   const data = JSON.stringify({
-    id: activity.key,
+    id: "2",
     type: "data",
-    payload: { data: { subscribeToActivity: { ...activity } } },
+    payload: {
+      subscribeToActivity: activity,
+    },
   });
 
   await postToConnection({ connectionId, data });
