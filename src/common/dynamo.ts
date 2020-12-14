@@ -24,7 +24,10 @@ export async function queryItems(
 ): Promise<ItemList> {
   const params: DocumentClient.QueryInput = {
     TableName: getTableName(),
-    KeyConditionExpression: "key = :key",
+    KeyConditionExpression: "#key = :key",
+    ExpressionAttributeNames: {
+      "#key": "key",
+    },
     ExpressionAttributeValues: {
       ":key": key,
     },

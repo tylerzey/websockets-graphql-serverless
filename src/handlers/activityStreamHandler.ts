@@ -1,8 +1,10 @@
 import "source-map-support/register";
 import { DynamoDBStreamEvent } from "aws-lambda";
+import { ApiGatewayManagementApi } from "aws-sdk";
 import { itemToData } from "dynamo-converters";
 import { dynamoLabels } from "../common/dynamoHelpers";
 import { getSubscriptions } from "../entities/subscriptions/model";
+import { getConnectionById } from "../entities/connections/model";
 
 async function publishWebsocketMessagesForRecord(
   currentRecordAsJavascriptObject: any
@@ -26,6 +28,43 @@ async function publishWebsocketMessagesForRecord(
   console.log(
     "subscriptionsToCurrentActivity: ",
     subscriptionsToCurrentActivity
+  );
+
+  await Promise.all(
+    subscriptionsToCurrentActivity.map(async (subscription) => {
+      const connectionId = subscription?.connectionId as string;
+
+      if (!connectionId) {
+        return;
+      }
+
+      const connection = await getConnectionById(connectionId);
+      console.log(connection);
+      const data = JSON.stringify({
+        id: currentRecordAsJavascriptObject.key,
+        type: "data",
+        payload: {
+          data: {
+            subscribeToActivity: { activityName: "x", connectionId: "x" },
+          },
+        },
+      });
+      console.log(data);
+
+      try {
+        await new ApiGatewayManagementApi({
+          endpoint:
+            "https://ga6eq542y6.execute-api.us-east-1.amazonaws.com/prod",
+        })
+          .postToConnection({
+            ConnectionId: connectionId,
+            Data: data,
+          })
+          .promise();
+      } catch (error) {
+        console.error(error);
+      }
+    })
   );
 }
 

@@ -25,14 +25,14 @@ const activityType = new GraphQLObjectType({
 
 export const activitySubscriptions = (authedUser: AuthenticatedUserType) => ({
   subscribeToActivity: {
-    type: GraphQLString,
+    type: new GraphQLList(activityType),
     args: {
-      activityTypeToSubscribeTo: { type: new GraphQLNonNull(GraphQLString) },
+      activityName: { type: new GraphQLNonNull(GraphQLString) },
     },
     resolve: async (root: RootType, args: any, context: ContextType) => {
       await createSubscription(args, context);
 
-      return "Success";
+      return queryItems(args);
     },
   },
 });
@@ -42,7 +42,7 @@ export const activityQueries = (authedUser: AuthenticatedUserType) => ({
     name: "ActivityQuery",
     type: new GraphQLList(activityType),
     args: {
-      activityName: { type: GraphQLString },
+      activityName: { type: new GraphQLNonNull(GraphQLString) },
     },
     resolve: async (root: RootType, args: any) => {
       console.log("activity graphql query resolving on ", args);

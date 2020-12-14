@@ -24,6 +24,8 @@ export async function createSubscription(
     secondaryKey: `${dynamoLabels.connection}${dynamoSeparator}${context.user.connectionId}`,
     expiresAfter: twoHoursFromNowInSeconds,
     label: dynamoLabels.subscription,
+    activityName: args.activityTypeToSubscribeTo,
+    connectionId: context.user.connectionId,
   };
 
   await storeItem(subscription);
